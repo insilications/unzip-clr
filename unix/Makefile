@@ -51,15 +51,15 @@ CFLAGS = -O
 CF_NOOPT = -I. -I$(IZ_BZIP2) -DUNIX $(LOC)
 CF = $(CFLAGS) $(CF_NOOPT)
 LFLAGS1 =
-LF = -o unzip$E $(LFLAGS1)
+LF = -o unzip$E $(LFLAGS1) $(LDFLAGS)  
 LF2 = -s
 
 # UnZipSFX flags
-SL = -o unzipsfx$E $(LFLAGS1)
+SL = -o unzipsfx$E $(LFLAGS1) $(LDFLAGS)  
 SL2 = $(LF2)
 
 # fUnZip flags
-FL = -o funzip$E $(LFLAGS1)
+FL = -o funzip$E $(LFLAGS1) $(LDFLAGS)  
 FL2 = $(LF2)
 
 # general-purpose stuff
