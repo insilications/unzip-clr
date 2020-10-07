@@ -231,13 +231,13 @@ generic_msg:
 # yes, we should be able to use the $O macro to combine these two, but it
 # fails on some brain-damaged makes (e.g., AIX's)...no big deal
 .c.o:
-	$(CC) -c $(CF) $*.c
+	$(CC) -c $(CF) $(CFLAGS) $*.c
 
 .c.obj:
-	$(CC) -c $(CF) $*.c
+	$(CC) -c $(CF) $(CFLAGS) $*.c
 
 .c.pic.o:
-	$(CC) -c $(CF) -o $@ $*.c
+	$(CC) -c $(CF) $(CFLAGS) -o $@ $*.c
 
 # this doesn't work...directories are always a pain with implicit rules
 #.1.txt:		man/$<
@@ -280,7 +280,7 @@ unzipsdocs:	unzips docs
 # make utilities if default:  change "unzip$E:" to "unzip$E:&"
 
 unzip$E:	$(OBJS) $(LIBBZ2)	# add `&' for parallel makes
-	$(LD) $(LF) -L$(IZ_BZIP2) $(LOBJS) $(L_BZ2) $(LF2)
+	$(LD) $(LF) $(LDFLAGS) -L$(IZ_BZIP2) $(LOBJS) $(L_BZ2) $(LF2)
 
 unzipsfx$E:	$(OBJX)			# add `&' for parallel makes
 	$(LD) $(SL) $(LOBJX) $(SL2)
@@ -326,51 +326,51 @@ zipinfo$O:	zipinfo.c $(UNZIP_H)
 
 # unzipsfx compilation section
 unzipsfx$O:	unzip.c $(UNZIP_H) crypt.h unzvers.h consts.h
-	$(CC) -c $(CF) -DSFX -o $@ unzip.c
+	$(CC) -c $(CF) $(CFLAGS) -DSFX -o $@ unzip.c
 
 crc32_$O:	crc32.c $(UNZIP_H) zip.h crc32.h
-	$(CC) -c $(CF) -DSFX -o $@ crc32.c
+	$(CC) -c $(CF) $(CFLAGS) -DSFX -o $@ crc32.c
 
 crypt_$O:	crypt.c $(UNZIP_H) zip.h crypt.h crc32.h ttyio.h
-	$(CC) -c $(CF) -DSFX -o $@ crypt.c
+	$(CC) -c $(CF) $(CFLAGS) -DSFX -o $@ crypt.c
 
 extract_$O:	extract.c $(UNZIP_H) crc32.h crypt.h
-	$(CC) -c $(CF) -DSFX -o $@ extract.c
+	$(CC) -c $(CF) $(CFLAGS) -DSFX -o $@ extract.c
 
 fileio_$O:	fileio.c $(UNZIP_H) crc32.h crypt.h ttyio.h ebcdic.h
-	$(CC) -c $(CF) -DSFX -o $@ fileio.c
+	$(CC) -c $(CF) $(CFLAGS) -DSFX -o $@ fileio.c
 
 globals_$O:	globals.c $(UNZIP_H)
-	$(CC) -c $(CF) -DSFX -o $@ globals.c
+	$(CC) -c $(CF) $(CFLAGS) -DSFX -o $@ globals.c
 
 inflate_$O:	inflate.c inflate.h $(UNZIP_H) crypt.h
-	$(CC) -c $(CF) -DSFX -o $@ inflate.c
+	$(CC) -c $(CF) $(CFLAGS) -DSFX -o $@ inflate.c
 
 match_$O:	match.c $(UNZIP_H)
-	$(CC) -c $(CF) -DSFX -o $@ match.c
+	$(CC) -c $(CF) $(CFLAGS) -DSFX -o $@ match.c
 
 process_$O:	process.c $(UNZIP_H) crc32.h
-	$(CC) -c $(CF) -DSFX -o $@ process.c
+	$(CC) -c $(CF) $(CFLAGS) -DSFX -o $@ process.c
 
 ttyio_$O:	ttyio.c $(UNZIP_H) zip.h crypt.h ttyio.h
-	$(CC) -c $(CF) -DSFX -o $@ ttyio.c
+	$(CC) -c $(CF) $(CFLAGS) -DSFX -o $@ ttyio.c
 
 ubz2err_$O:	ubz2err.c $(UNZIP_H)
-	$(CC) -c $(CF) -DSFX -o $@ ubz2err.c
+	$(CC) -c $(CF) $(CFLAGS) -DSFX -o $@ ubz2err.c
 
 
 # funzip compilation section
 cryptf$O:	crypt.c $(UNZIP_H) zip.h crypt.h crc32.h ttyio.h
-	$(CC) -c $(CF) -DFUNZIP -o $@ crypt.c
+	$(CC) -c $(CF) $(CFLAGS) -DFUNZIP -o $@ crypt.c
 
 globalsf$O:	globals.c $(UNZIP_H)
-	$(CC) -c $(CF) -DFUNZIP -o $@ globals.c
+	$(CC) -c $(CF) $(CFLAGS) -DFUNZIP -o $@ globals.c
 
 inflatef$O:	inflate.c inflate.h $(UNZIP_H) crypt.h
-	$(CC) -c $(CF) -DFUNZIP -o $@ inflate.c
+	$(CC) -c $(CF) $(CFLAGS) -DFUNZIP -o $@ inflate.c
 
 ttyiof$O:	ttyio.c $(UNZIP_H) zip.h crypt.h ttyio.h
-	$(CC) -c $(CF) -DFUNZIP -o $@ ttyio.c
+	$(CC) -c $(CF) $(CFLAGS) -DFUNZIP -o $@ ttyio.c
 
 
 # optional assembler replacements
@@ -389,24 +389,24 @@ crc_sysv$O:	crc_i386.S $(ACONF_DEP)				# 32bit, SysV AS
 	$(RM) crc_i386s.s
 
 msdos$O:	msdos/msdos.c $(UNZIP_H) unzvers.h		# DOS only
-	$(CC) -c $(CF) msdos/msdos.c
+	$(CC) -c $(CF) $(CFLAGS) msdos/msdos.c
 
 msdos_$O:	msdos/msdos.c $(UNZIP_H)			# DOS unzipsfx
 	-$(CP) msdos/msdos.c msdos_.c > nul
-	$(CC) -c $(CF) -DSFX msdos_.c
+	$(CC) -c $(CF) $(CFLAGS) -DSFX msdos_.c
 	$(RM) msdos_.c
 
 #os2$O:		os2/os2.c $(UNZIP_H)				# OS/2 only
-#	$(CC) -c $(CF) os2/os2.c
+#	$(CC) -c $(CF) $(CFLAGS) os2/os2.c
 
 unix$O:		unix/unix.c $(UNZIP_H) unzvers.h		# Unix only
-	$(CC) -c $(CF) unix/unix.c
+	$(CC) -c $(CF) $(CFLAGS) unix/unix.c
 
 unix_$O:	unix/unix.c $(UNZIP_H)				# Unix unzipsfx
-	$(CC) -c $(CF) -DSFX -o $@ unix/unix.c
+	$(CC) -c $(CF) $(CFLAGS) -DSFX -o $@ unix/unix.c
 
 unix.pic.o:	unix/unix.c $(UNZIP_H) unzvers.h		# Unix shlib
-	$(CC) -c $(CF) -o $@ unix/unix.c
+	$(CC) -c $(CF) $(CFLAGS) -o $@ unix/unix.c
 
 
 unix_make:
@@ -558,10 +558,10 @@ generic_gccpkg:	generic_gcc svr4package
 generic1:	unzips	   # first try if unknown
 
 generic2:	unix_make  # second try if unknown:  hope make is called "make"
-	make $(MAKEF) unzips CF="$(CF) -DBSD"
+	make $(MAKEF) unzips CF="$(CF) $(CFLAGS) -DBSD"
 
 generic3:	unix_make  # third try if unknown:  hope make is called "make"
-	make $(MAKEF) unzips CF="$(CF) -DSYSV"
+	make $(MAKEF) unzips CF="$(CF) $(CFLAGS) -DSYSV"
 
 # Generic build including bzip2 decompression support for unzip.
 # Requires presence of the bzip2 sources in subdirectory bzip2.
@@ -580,7 +580,7 @@ generic_bz2:	unix_make
 generic_zlib:	unix_make
 	@echo\
  "This target assumes zlib (libz.a or libz.so.*) is already installed."
-	$(MAKE) unzip funzip CF="$(CF) -DUSE_ZLIB" LF2="-lz $(LF2)"
+	$(MAKE) unzip funzip CF="$(CF) $(CFLAGS) -DUSE_ZLIB" LF2="-lz $(LF2)"
 
 # Generic GNU C shared library.  This is an example of how to compile UnZip as
 # a shared library.  (Doing so as a static library would be similar.)  See also
@@ -651,7 +651,7 @@ vax:		unzips	# general-purpose VAX target (not counting VMS)
 bsd:		_bsd	# generic BSD (BSD 4.2 & Ultrix handled in unzip.h)
 
 _bsd:		unix_make
-	$(MAKE) unzips CF="$(CF) -DBSD"
+	$(MAKE) unzips CF="$(CF) $(CFLAGS) -DBSD"
 
 #----------------------------------------------------------------------------
 #  SysV group (for extern long timezone and ioctl.h instead of sgtty.h):
@@ -665,7 +665,7 @@ sysv:		_sysv	# generic System V Unix (Xenix handled in unzip.h)
 xos:		_sysv	# Olivetti LSX-3005..3045, X/OS 2.3 and 2.4
 
 _sysv:		unix_make
-	$(MAKE) unzips CF="$(CF) -DSYSV"
+	$(MAKE) unzips CF="$(CF) $(CFLAGS) -DSYSV"
 
 # extension to perform SVR4 package-creation after compilation
 _sysvp:		_sysv svr4package
@@ -679,7 +679,7 @@ v7:		_v7	# generic Unix Version 7 box (prob. only Pixel...)
 
 _v7:
 	make $(MAKEF) unzips \
-	 CF="$(CF) -DV7 -DNO_PARAM_H -DSHORT_NAMES -DBSD -DZMEM -DNO_LCHOWN -DNO_LCHMOD"
+	 CF="$(CF) $(CFLAGS) -DV7 -DNO_PARAM_H -DSHORT_NAMES -DBSD -DZMEM -DNO_LCHOWN -DNO_LCHMOD"
 
 #----------------------------------------------------------------------------
 #  "Unique" group (require non-standard options):
@@ -687,11 +687,11 @@ _v7:
 
 # AT&T 3B2/1000-80; should work on any WE32XXX machine
 3Bx:		unix_make
-	$(MAKE) unzips CF="$(CF) -DCBREAK=2"
+	$(MAKE) unzips CF="$(CF) $(CFLAGS) -DCBREAK=2"
 
 # AT&T 7300 (M68000/SysV.3) (add -DSYSV? -DNO_LIMITS?)
 7300:		unix_make
-	$(MAKE) unzips CF="$(CF) -DNO_DIR -DNO_MKDIR -DNO_STRNICMP -DNO_UID_GID -DNO_FCHMOD -DNO_LCHOWN -DNO_LCHMOD -DCBREAK=2"
+	$(MAKE) unzips CF="$(CF) $(CFLAGS) -DNO_DIR -DNO_MKDIR -DNO_STRNICMP -DNO_UID_GID -DNO_FCHMOD -DNO_LCHOWN -DNO_LCHMOD -DCBREAK=2"
 
 7300_gcc:	unix_make
 	$(MAKE) unzips CC=gcc LD=gcc LF2="" CFLAGS="-O2" \
@@ -703,15 +703,15 @@ aix:		rs6000
 
 # Amdahl (IBMish) mainframe, UTS (SysV) 1.2.4, 2.0.1, 3.x
 amdahl:		unix_make
-	$(MAKE) unzips CF="$(CF) -DSYSV -DNO_UID_GID -DNO_LCHOWN -DNO_LCHMOD"
+	$(MAKE) unzips CF="$(CF) $(CFLAGS) -DSYSV -DNO_UID_GID -DNO_LCHOWN -DNO_LCHMOD"
 
 # Amdahl UTS 2.1.4 with "extended file types" filesystem (aarrrggghhhh...)
 amdahl_eft:	unix_make
-	$(MAKE) unzips CF="$(CF) -eft -DSYSV -DNO_UID_GID -DNO_LCHOWN -DNO_LCHMOD"
+	$(MAKE) unzips CF="$(CF) $(CFLAGS) -eft -DSYSV -DNO_UID_GID -DNO_LCHOWN -DNO_LCHMOD"
 
 # Apollo Domain/OS machines (added -D...SOURCE options) [Gordon Fox, 960810]
 apollo:		unix_make
-	$(MAKE) unzips CF="$(CF) -D_INCLUDE_BSD_SOURCE -D_INCLUDE_XOPEN_SOURCE -DNO_LCHOWN -DNO_LCHMOD"
+	$(MAKE) unzips CF="$(CF) $(CFLAGS) -D_INCLUDE_BSD_SOURCE -D_INCLUDE_XOPEN_SOURCE -DNO_LCHOWN -DNO_LCHMOD"
 
 # BSDI BSD/OS on 386 platform, using the assembler replacement for crc32.c
 bsdi:		unix_make
@@ -800,7 +800,7 @@ isc_gcc:	unix_make
 # "ISI machine (68025 CPU)" (based on e-mail from Rob White <rsw@tfs.com>;
 # no further information).  May also need DIRENT defined.
 isi:		unix_make
-	$(MAKE) unzips CF="$(CF) -DDECLARE_ERRNO -DNO_LCHOWN -DNO_LCHMOD"
+	$(MAKE) unzips CF="$(CF) $(CFLAGS) -DDECLARE_ERRNO -DNO_LCHOWN -DNO_LCHMOD"
 
 # Linux on 386 platform, using the assembler replacement for crc32.c. (-O4 and
 # -fno-strength-reduce have virtually no effect beyond -O3.  Add "-m486
@@ -868,7 +868,7 @@ linux_shlibz:	unix_make
 
 # LynxOS-x86 2.3.0 and newer, a real-time BSD-like OS; uses gcc.
 lynx:		unix_make
-	$(MAKE) unzips CC=gcc CF="$(CF) -DLynx -DLYNX -DBSD -DUNIX"
+	$(MAKE) unzips CC=gcc CF="$(CF) $(CFLAGS) -DLynx -DLYNX -DBSD -DUNIX"
 
 # Macintosh MacOS X (Unix-compatible enviroment), using standard compiler
 macosx:	unix_make
@@ -883,12 +883,12 @@ macosx_gcc:	unix_make
 # Minix 1.5 PC for the 386.  Invoke as is to use default cc, or as "make
 # minix CC=gcc" to use gcc.  Try "make linux" if you have a working termios.h.
 minix:		unix_make
-	$(MAKE) unzips CF="$(CF) -DMINIX -DSHORT_NAMES -DNO_LCHOWN -DNO_LCHMOD" CC=$(CC) LD=$(CC)
+	$(MAKE) unzips CF="$(CF) $(CFLAGS) -DMINIX -DSHORT_NAMES -DNO_LCHOWN -DNO_LCHMOD" CC=$(CC) LD=$(CC)
 
 # MPE/iX, the Unix variant for HP 3000 systems.
 mpeix:		unix_make
 	$(MAKE) unzips CC=c89\
-	 CF="$(CF) -DUNIX -D_POSIX_SOURCE -DHAVE_TERMIOS_H -DPASSWD_FROM_STDIN -DNO_PARAM_H -DNO_LCHOWN -DNO_LCHMOD"\
+	 CF="$(CF) $(CFLAGS) -DUNIX -D_POSIX_SOURCE -DHAVE_TERMIOS_H -DPASSWD_FROM_STDIN -DNO_PARAM_H -DNO_LCHOWN -DNO_LCHMOD"\
 	 LF2=-lbsd CP=cp LN="ln -s"
 
 # NeXT info.
@@ -927,14 +927,14 @@ os390:		unix_make
 	set -x; \
 	$(MAKE) $(MAKEF) unzips \
 	 CC=c89 LD="\$$(CC) -Wl,EDIT=NO" \
-	 CF="$(CF) -DSYSV -DUNIX -DOS390 -DEBCDIC -DNO_PARAM_H \
+	 CF="$(CF) $(CFLAGS) -DSYSV -DUNIX -DOS390 -DEBCDIC -DNO_PARAM_H \
 	 -DNO_LCHOWN -DNO_LCHMOD \
 	 -D_ALL_SOURCE $(HOST_VERSINFO)" LF2=""
 
 # Sequent Symmetry running Dynix/ptx (sort of SysV.3):  needs to link
 # with libseq to get symlink().
 ptx:		unix_make
-	$(MAKE) unzips CF="$(CF) -DSYSV -DTERMIO -DPTX -DNO_LCHOWN -DNO_LCHMOD" LF2="$(LF2) -lseq"
+	$(MAKE) unzips CF="$(CF) $(CFLAGS) -DSYSV -DTERMIO -DPTX -DNO_LCHOWN -DNO_LCHMOD" LF2="$(LF2) -lseq"
 
 # Pyramid 90X (probably all) under >= OSx4.1, either universe.  (This is an
 # experimental target!  If it fails, use either pyr_ucb or pyr_att instead.)
@@ -960,11 +960,11 @@ qnxnto:		unix_make
 # REGULUS:  68040-based, "real-time" SysV.3 mutant; uses gcc, with "REGULUS"
 # predefined.
 regulus:	unix_make
-	$(MAKE) unzips CF="$(CF) -traditional -DSYSV -DNO_MKDIR -DNO_LCHOWN -DNO_LCHMOD"
+	$(MAKE) unzips CF="$(CF) $(CFLAGS) -traditional -DSYSV -DNO_MKDIR -DNO_LCHOWN -DNO_LCHMOD"
 
 # IBM RS/6000 under AIX 3.2
 rs6000:		unix_make
-	$(MAKE) unzips CF="$(CF) -DBSD -D_BSD -DUNIX" LF2="-lbsd"
+	$(MAKE) unzips CF="$(CF) $(CFLAGS) -DBSD -D_BSD -DUNIX" LF2="-lbsd"
 
 # SCO cross compile from Unix to DOS. Tested with Xenix/386 and OpenDeskTop.
 # Should work with Xenix/286 as well. (davidsen)  Note that you *must* remove
@@ -980,23 +980,23 @@ sco_dos:	unix_make
 # not using a USA-style keyboard and display, you may want to remove -nointl
 # to get support.  It adds quite a bit to the size of the executable.
 sco_sl:		unix_make
-	$(MAKE) unzips LF="$(LF) -nointl" LF2="$(LF2) -lc_s"\
+	$(MAKE) unzips LF="$(LF) $(LDFLAGS) -nointl" LF2="$(LF2) -lc_s"\
 	 SL="$(SL) -nointl" FL="$(FL) -nointl"
 
 # SCO Xenix/286 2.2.3 or later with development system 2.2.1 or later
 sco_x286:	unix_make
-	$(MAKE) unzips CF="$(CF) -Mel2 -LARGE -DNO_MKDIR -DNO_LCHOWN -DNO_LCHMOD" \
-	 LF="$(LF) -Mel2 -LARGE -lx" SL="$(SL) -Mel2 -LARGE" \
+	$(MAKE) unzips CF="$(CF) $(CFLAGS) -Mel2 -LARGE -DNO_MKDIR -DNO_LCHOWN -DNO_LCHMOD" \
+	 LF="$(LF) $(LDFLAGS) -Mel2 -LARGE -lx" SL="$(SL) -Mel2 -LARGE" \
 	 FL="$(FL) -Mel2 -LARGE"
 
 # Sequent Symmetry with Dynix.  (386, but needs -DZMEM)
 # This should also work on Balance but I can't test it just yet.
 sequent:	unix_make
-	$(MAKE) unzips CF="$(CF) -DBSD -DZMEM -DNO_LCHOWN -DNO_LCHMOD"
+	$(MAKE) unzips CF="$(CF) $(CFLAGS) -DBSD -DZMEM -DNO_LCHOWN -DNO_LCHMOD"
 
 # Sun 2, 3, 4 running SunOS 3.x
 sunos3:		unix_make
-	$(MAKE) unzips CF="$(CF) -DNO_UID_GID -DUID_USHORT -DNO_LCHOWN -DNO_LCHMOD"
+	$(MAKE) unzips CF="$(CF) $(CFLAGS) -DNO_UID_GID -DUID_USHORT -DNO_LCHOWN -DNO_LCHMOD"
 
 # Generic System V + GNU C
 sysv_gcc:	unix_make
@@ -1006,12 +1006,12 @@ sysv_gcc:	unix_make
 # AT&T 6300+, System V.2 Unix:  run-time out-of-memory error if don't use -Ml;
 # also compile-time error if work arrays dimensioned at HSIZE+2 (>32K)
 sysv6300:	unix_make
-	$(MAKE) unzips CF="$(CF) -Ml -DSYSV -DNO_LCHOWN -DNO_LCHMOD" LF="$(LF) -Ml"\
+	$(MAKE) unzips CF="$(CF) $(CFLAGS) -Ml -DSYSV -DNO_LCHOWN -DNO_LCHMOD" LF="$(LF) $(LDFLAGS) -Ml"\
 	 SL="$(SL) -Ml" FL="$(FL) -Ml"
 
 # Texas Instruments System V.3 (running on HP 9000-1500)
 ti_sysv:	unix_make
-	$(MAKE) unzips CF="$(CF) -DSYSV -DNO_UID_GID -DUID_USHORT -DNO_LCHOWN -DNO_LCHMOD"
+	$(MAKE) unzips CF="$(CF) $(CFLAGS) -DSYSV -DNO_UID_GID -DUID_USHORT -DNO_LCHOWN -DNO_LCHMOD"
 
 # SCO Xenix (Joe Foster 950508:  "unzip needs to be linked with -lx [for the
 # opendir(), readdir(), telldir(), rewinddir(), and closedir() calls]")
