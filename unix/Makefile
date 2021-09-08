@@ -47,10 +47,9 @@ LD = $(CC)#	must match, else "unresolved symbol:  ___main" is possible)
 AS = as
 LOC = $(D_USE_BZ2) $(LOCAL_UNZIP)
 AF = $(LOC)
-CFLAGS = -O
-CF_NOOPT = -I. -I$(IZ_BZIP2) -DUNIX $(LOC)
+CF_NOOPT = -I. -I$(IZ_BZIP2) -DUNIX $(LOC) $(CFLAGS)
 CF = $(CFLAGS) $(CF_NOOPT)
-LFLAGS1 =
+LFLAGS1 = $(LDFLAGS)
 LF = -o unzip$E $(LFLAGS1)
 LF2 = -s
 
