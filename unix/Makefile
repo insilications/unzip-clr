@@ -47,7 +47,7 @@ LD = $(CC)#	must match, else "unresolved symbol:  ___main" is possible)
 AS = as
 LOC = $(D_USE_BZ2) $(LOCAL_UNZIP)
 AF = $(LOC)
-CF_NOOPT = -I. -I$(IZ_BZIP2) -DUNIX $(LOC) $(CFLAGS)
+CF_NOOPT = -I. -I/usr/include/bzlib.h -DUNIX $(LOC) $(CFLAGS)
 CF = $(CFLAGS) $(CF_NOOPT)
 LFLAGS1 = $(LDFLAGS)
 LF = -o unzip$E $(LFLAGS1)
@@ -90,9 +90,9 @@ ACONF_DEP =
 IZ_OUR_BZIP2_DIR = bzip2
 IZ_BZIP2 = $(IZ_OUR_BZIP2_DIR)
 ## The following symbols definitions need to be set to activate bzip2 support:
-#D_USE_BZ2 = -DUSE_BZIP2
-#L_BZ2 = -lbz2
-#LIBBZ2 = $(IZ_BZIP2)/libbz2.a
+D_USE_BZ2 = -DUSE_BZIP2
+L_BZ2 = -lbz2
+LIBBZ2 = /usr/lib64/libbz2.a
 
 # defaults for unzip's "built-in" bzip2 library compilation
 CC_BZ = $(CC)
@@ -279,7 +279,7 @@ unzipsdocs:	unzips docs
 # make utilities if default:  change "unzip$E:" to "unzip$E:&"
 
 unzip$E:	$(OBJS) $(LIBBZ2)	# add `&' for parallel makes
-	$(LD) $(LF) -L$(IZ_BZIP2) $(LOBJS) $(L_BZ2) $(LF2)
+	$(LD) $(LF) -L$(IZ_BZIP2) $(LOBJS) /usr/lib64/libbz2.a $(LF2)
 
 unzipsfx$E:	$(OBJX)			# add `&' for parallel makes
 	$(LD) $(SL) $(LOBJX) $(SL2)
@@ -569,7 +569,7 @@ generic_bz2:	unix_make
 	@echo\
  "This target assumes bzip2 sources are available in subfolder bzip2/."
 	$(MAKE) $(MAKEF) unzips D_USE_BZ2="-DUSE_BZIP2"\
-	 L_BZ2="-lbz2" LIBBZ2="$(IZ_OUR_BZIP2_DIR)/libbz2.a" \
+	 /usr/lib64/libbz2.a \
 	 CC_BZ="$(CC)" CFLAGS_BZ="$(CFLAGS)"
 
 # Generic unzip and funzip target using either shared or static zlib for
